@@ -468,6 +468,7 @@ def agent(
         memory_window=config.agents.defaults.memory_window,
         reasoning_effort=config.agents.defaults.reasoning_effort,
         search_api_key=config.tools.web.search.api_key or None,
+        search_engine=config.tools.web.search.engine or None,
         web_proxy=config.tools.web.proxy or None,
         exec_config=config.tools.exec,
         cron_service=cron,

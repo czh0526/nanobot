@@ -146,8 +146,9 @@ class WebSearchTool(Tool):
         max_results: int = 5,
         engine: str = "duckduckgo"):
         
-        self.max_results = max_results 
-        self.engine = engine.lower()
+        self.max_results = max_results
+        if engine: 
+            self.engine = engine.lower()
 
         if api_key:
             self.api_key = api_key 

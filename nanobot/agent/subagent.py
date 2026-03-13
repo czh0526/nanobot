@@ -106,7 +106,7 @@ class SubagentManager:
                 restrict_to_workspace=self.restrict_to_workspace,
                 path_append=self.exec_config.path_append,
             ))
-            tools.register(WebSearchTool(api_key=self.brave_api_key, proxy=self.web_proxy))
+            tools.register(WebSearchTool(api_key=self.search_api_key, proxy=self.web_proxy))
             tools.register(WebFetchTool(proxy=self.web_proxy))
             
             system_prompt = self._build_subagent_prompt()

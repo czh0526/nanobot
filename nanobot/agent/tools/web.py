@@ -126,6 +126,37 @@ class DuckDuckGoBackend(SearchBackend):
         
         return results
 
+class BraveBackend(SearchBackend):
+    """Brave Search API - privacy-focused web search."""
+    
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+    
+    def is_available(self) -> tuple[bool, str]:
+        if not self.api_key:
+            return False, "BRAVE_API_KEY not configured. Get one at https://brave.com/search/api/"
+        return True, ""
+    
+    async def search(self, query: str, count: int) -> list[dict]:
+        async with httpx.AsyncClient() as client:
+            r = await client.get(
+                "https://api.search.brave.com/res/v1/web/search",
+                params={"q": query, "count": count},
+                headers={"Accept": "application/json", "X-Subscription-Token": self.api_key},
+                timeout=10.0
+            )
+            r.raise_for_status()
+        
+        results = []
+        for item in r.json().get("web", {}).get("results", [])[:count]:
+            results.append({
+                "title": item.get("title", ""),
+                "url": item.get("url", ""),
+                "snippet": item.get("description", "")
+            })
+        return results
+
+
 
 class WebSearchTool(Tool):
     """Search the web using Brave Search API."""
@@ -163,6 +194,8 @@ class WebSearchTool(Tool):
         """Create the search backend based on configured engine."""
         if self.engine == "duckduckgo":
             return DuckDuckGoBackend()
+        elif self.engine == "brave":
+            return BraveBackend(api_key=self.api_key)
         else:
             logger.error(f"Unsupported engine `{self.engine}`")
             return None
